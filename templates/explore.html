@@ -19,8 +19,7 @@
                     let blocksHtml = `<table class="table table-bordered table-striped">
                         <tr>
                             <th>Block</th>
-                            <th>Contractor 1</th>
-                            <th>Contractor 2</th>
+                            <th>Date</th>
                             <th>Description</th>
                             <th>Document checksum</th>
                         </tr>`;
@@ -28,9 +27,8 @@
                     for (const block of blocks) {
                         for (const doc of block.d) {
                             blocksHtml += `<tr>
-                                <td>#${block.i}</td>
-                                <td>${doc.a}</td>
-                                <td>${doc.b}</td>
+                                <td><a href="/block/${block.h}">#${block.i}</a></td>
+                                <td>${new Date(block.t * 1000).toLocaleString()}</td>
                                 <td>${doc.d}</td>
                                 <td>${doc.c}</td>
                             </tr>`;

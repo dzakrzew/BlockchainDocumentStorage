@@ -2,6 +2,8 @@
 
 {% block body %}
 
+    <h1>Verify document</h1>
+    <hr>
     <div class="card card-default">
         <div class="card-header">Verification result</div>
             <div class="card-body">
@@ -13,15 +15,11 @@
                     <table class="table table-bordered">
                         <tr>
                             <th>Included in block</th>
-                            <td>#{{ result['block']['index'] }}</td>
-                        </tr>
-                        <tr>
-                            <th>Contractor 1</th>
-                            <td>{{ result['doc']['a'] }}</td>
-                        </tr>
-                        <tr>
-                            <th>Contractor 2</th>
-                            <td>{{ result['doc']['b'] }}</td>
+                            <td>
+                                <a href="/block/{{ result['block']['hash'] }}">
+                                    #{{ result['block']['index'] }}
+                                </a>
+                            </td>
                         </tr>
                         <tr>
                             <th>Description</th>

@@ -1,12 +1,17 @@
-from flask import Flask, render_template, jsonify, request, flash
+from flask import Flask, render_template, jsonify, request, flash, redirect
 from utils.blockchain import Blockchain
 from utils.document import Document
 import hashlib
+import logging
+import socket, errno
 
 blockchain = Blockchain()
+blockchain.start_mining()
 
 app = Flask(__name__)
 app.secret_key = 'super secret key'
+log = logging.getLogger('werkzeug')
+log.disabled = True
 
 @app.route('/')
 def index():
@@ -17,17 +22,22 @@ def upload():
     if request.method == 'POST':
         if 'file' not in request.files:
             flash('No file selected')
+        else:
+            file = request.files['file']
+            description = request.form.get('description')
+            checksum = hashlib.sha256(file.read()).hexdigest()
 
-        file = request.files['file']
-        sideA = request.form.get('sideA')
-        sideB = request.form.get('sideB')
-        description = request.form.get('description')
-        checksum = hashlib.sha256(file.read()).hexdigest()
+            existing_block = blockchain.look_for_document_by_checksum(checksum)
 
-        doc = Document(sideA, sideB, checksum, description)
-        blockchain.append_document(doc)
+            if existing_block:
+                flash('This file already exists')
+                return redirect('/block/' + str(existing_block['block'].hash))
 
-        flash('Document with checksum ' + checksum + ' uploaded and enqueued in blockchain');
+            doc = Document(checksum, description)
+            blockchain.append_document(doc)
+            flash('Document with checksum ' + checksum + ' uploaded and enqueued in blockchain');
+
+            return redirect('/')
 
     return render_template('upload.html')
 
@@ -44,6 +54,16 @@ def verify():
 
     return render_template('verify.html')
 
+@app.route('/block/<hash>')
+def view_block(hash):
+    block = blockchain.get_block_by_hash(hash)
+    return render_template('view_block.html', block=block)
+
 @app.route('/api/dumpChain')
 def dump_chain():
     return jsonify(blockchain.dump_chain())
+
+def run_server():
+    app.run(host='0.0.0.0', port=5000)
+
+run_server()
