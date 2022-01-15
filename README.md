@@ -1,7 +1,10 @@
 # BlockchainDocumentStorage
 A student blockchain project.
 
+## Dependencies
+* flask
+
 ## How to use
 ```
-flask run
+python app.py
 ```
