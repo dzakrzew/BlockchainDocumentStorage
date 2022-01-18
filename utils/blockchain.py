@@ -33,7 +33,7 @@ class Blockchain():
                 if digest[:self.difficulty] == ('0' * self.difficulty):
                     print('PoW result: ' + digest + ' for block #' + str(block.index))
                     self.chain.append(block)
-                    self.waiting_documents = []
+                    self.waiting_documents = self.waiting_documents[:-1]
                     self.save_chain_to_file()
     
     def start_mining(self):
